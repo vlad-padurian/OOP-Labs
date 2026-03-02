@@ -10,8 +10,16 @@
         std::cout << "[Player] " << nickname << " заспавнився! HP: " << health << std::endl;
     }
 };
+class DiamondSword {
+public:
+    int damage;
+    DiamondSword() : damage(7) {
+        std::cout << "[Item] Алмазний меч створено! Damage: " << damage << std::endl;
+    }
+};
    int main (){
        Player p1("VladosPro228");
+       DiamondSword sword;
        return 0;
    }
-//first comit
+іі
