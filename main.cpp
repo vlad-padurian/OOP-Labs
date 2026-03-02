@@ -17,9 +17,16 @@ public:
         std::cout << "[Item] Алмазний меч створено! Damage: " << damage << std::endl;
     }
 };
+class IronArmor {
+public:
+    int defense;
+    IronArmor() : defense(5) {
+        std::cout << "[Item] Залізна броня одягнена! Defense: " << defense << std::endl;
+    }
+};
    int main (){
        Player p1("VladosPro228");
        DiamondSword sword;
+       IronArmor armor;
        return 0;
    }
-іі
