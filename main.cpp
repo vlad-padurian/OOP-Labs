@@ -41,7 +41,18 @@ public:
         std::cout << "[Effect] " << nickname << " вилікувався!" << std::endl;
         return *this;
     }
+friend std::ostream& operator<<(std::ostream& os, const Player& p) {
+        os << "Nickname: " << p.nickname << " | HP: " << p.health;
+        return os;
+    }
 
+    friend std::istream& operator>>(std::istream& is, Player& p) {
+        std::cout << "Введіть Nickname: ";
+        is >> p.nickname;
+        std::cout << "Введіть Health: ";
+        is >> p.health;
+        return is;
+    }
     void updateProfile(std::string nickname, int health) {
         this->nickname = nickname; 
         this->health = health;
@@ -88,10 +99,17 @@ int main() {
     -p1;
     p1 + 15;
 
-    std::cout << "\n--- Підсумок ---" << std::endl;
-    p1.showStats();
-    admin.showStats();
-    std::cout << "Гравців онлайн: " << Player::getOnline() << std::endl;
+   std::cout << "\n--- Тест оператора виведення (<<) ---" << std::endl;
+    std::cout << "Об'єкт p1: " << p1 << std::endl;
+    std::cout << "Об'єкт admin: " << admin << std::endl;
+
+    std::cout << "\n--- Тест оператора введення (>>) ---" << std::endl;
+    std::cin >> p1; // Введи нові дані для p1 з клавіатури
+
+    std::cout << "\n--- Оновлений стан після введення ---" << std::endl;
+    std::cout << p1 << std::endl;
+
+    std::cout << "\nГравців онлайн: " << Player::getOnline() << std::endl;
     std::cout << "----------------\n" << std::endl;
 
     return 0;
