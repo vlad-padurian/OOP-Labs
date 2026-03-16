@@ -6,15 +6,18 @@ class Player {
 private:
     std::string nickname;
     int health;
+    static int playerCount;
 
 public:
     Player() : Player("Steve", 20) {}
 
     Player(std::string name, int hp) : nickname(name), health(hp) {
+        playerCount++;
         std::cout << "[Spawn] " << nickname << " заспавнився! HP: " << health << std::endl;
     }
 
     Player(const Player& other) : nickname(other.nickname + "_Copy"), health(other.health) {
+        playerCount++;
         std::cout << "[Copy] Створено копію гравця: " << nickname << std::endl;
     }
 
@@ -23,62 +26,61 @@ public:
         std::cout << "[Move] Дані гравця переміщено!" << std::endl;
     }
 
+    static int getOnline() {
+        return playerCount;
+    }
+
     void updateProfile(std::string nickname, int health) {
         this->nickname = nickname; 
         this->health = health;
-        std::cout << "[This] Поля оновлено через вказівник this." << std::endl;
     }
 
-    ~Player() {
-        if (nickname.empty()) {
-            std::cout << "[Destructor] Видалено порожній об'єкт." << std::endl;
-        } else {
-            std::cout << "[Quit] " << nickname << " вийшов з гри!" << std::endl;
-        }
-    }
-
-    void showStats() {
+    void showStats() const {
         if (nickname.empty()) {
             std::cout << "Статистика: Гравець порожній." << std::endl;
         } else {
             std::cout << "Nickname: " << nickname << " | HP: " << health << std::endl;
         }
     }
+
+    ~Player() {
+        if (!nickname.empty()) {
+            playerCount--;
+            std::cout << "[Quit] " << nickname << " вийшов з гри!" << std::endl;
+        }
+    }
 };
+
+int Player::playerCount = 0;
 
 class DiamondSword {
 private:
     int damage;
 public:
-    DiamondSword(int dmg = 7) : damage(dmg) {
-        std::cout << "[Item] Алмазний меч створено! Damage: " << damage << std::endl;
-    }
-    ~DiamondSword() { std::cout << "[Item] Алмазний меч знищено!" << std::endl; }
-    int getDamage() { return damage; }
+    DiamondSword(int dmg = 7) : damage(dmg) {}
+    int getDamage() const { return damage; }
 };
 
 class IronArmor {
 private:
     int defense;
 public:
-    IronArmor(int def = 5) : defense(def) {
-        std::cout << "[Item] Залізна броня одягнена! Defense: " << defense << std::endl;
-    }
-    ~IronArmor() { std::cout << "[Item] Броню знято!" << std::endl; }
-    int getDefense() { return defense; }
+    IronArmor(int def = 5) : defense(def) {}
+    int getDefense() const { return defense; }
 };
 
 int main() {
-    Player p1("VladosPro228", 30);
-    Player p2 = p1; 
-    p2.updateProfile("NewNick", 50);
-    Player p3 = std::move(p1);
+    std::cout << "Початковий онлайн: " << Player::getOnline() << std::endl;
 
-    std::cout << "\n--- Summary ---" << std::endl;
-    p2.showStats();
-    p3.showStats();
+    Player p1("VladosPro228", 30);
+    const Player admin("Admin_Bot", 999);
+    
+    std::cout << "Онлайн після спавну: " << Player::getOnline() << std::endl;
+
+    std::cout << "\n--- Статистика ---" << std::endl;
+    admin.showStats();
     p1.showStats();
-    std::cout << "----------------\n" << std::endl;
+    std::cout << "------------------\n" << std::endl;
 
     return 0;
 }
