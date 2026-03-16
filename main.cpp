@@ -12,6 +12,11 @@ public:
     Player(std::string name, int hp) : nickname(name), health(hp) {
         std::cout << "[Player] " << nickname << " заспавнився! HP: " << health << std::endl;
     }
+Player(const Player& other) {
+        nickname = other.nickname + " (Copy)"; 
+        health = other.health;
+        std::cout << "[Copy] Створено копію гравця: " << nickname << std::endl;
+    }
 
     ~Player() {
         std::cout << "[Player] " << nickname << " вийшов з гри!" << std::endl;
