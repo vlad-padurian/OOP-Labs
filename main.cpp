@@ -1,5 +1,6 @@
 #include<iostream>
 #include<string>
+#include <utility>
 
 class Player {
 private:
@@ -16,6 +17,10 @@ Player(const Player& other) {
         nickname = other.nickname + " (Copy)"; 
         health = other.health;
         std::cout << "[Copy] Створено копію гравця: " << nickname << std::endl;
+    }
+Player(Player&& other) noexcept : nickname(std::move(other.nickname)), health(other.health) {
+        other.health = 0; 
+        std::cout << "[Move] Гравця переміщено!" << std::endl;
     }
 
     ~Player() {
