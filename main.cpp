@@ -30,6 +30,18 @@ public:
         return playerCount;
     }
 
+    void operator-() {
+        this->health -= 10;
+        if (this->health < 0) this->health = 0;
+        std::cout << "[Effect] " << nickname << " отримав шкоду!" << std::endl;
+    }
+
+    Player& operator+(int heal) {
+        this->health += heal;
+        std::cout << "[Effect] " << nickname << " вилікувався!" << std::endl;
+        return *this;
+    }
+
     void updateProfile(std::string nickname, int health) {
         this->nickname = nickname; 
         this->health = health;
@@ -70,17 +82,17 @@ public:
 };
 
 int main() {
-    std::cout << "Початковий онлайн: " << Player::getOnline() << std::endl;
-
-    Player p1("VladosPro228", 30);
+    Player p1("VladosPro228", 50);
     const Player admin("Admin_Bot", 999);
-    
-    std::cout << "Онлайн після спавну: " << Player::getOnline() << std::endl;
 
-    std::cout << "\n--- Статистика ---" << std::endl;
-    admin.showStats();
+    -p1;
+    p1 + 15;
+
+    std::cout << "\n--- Підсумок ---" << std::endl;
     p1.showStats();
-    std::cout << "------------------\n" << std::endl;
+    admin.showStats();
+    std::cout << "Гравців онлайн: " << Player::getOnline() << std::endl;
+    std::cout << "----------------\n" << std::endl;
 
     return 0;
 }
