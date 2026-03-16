@@ -1,32 +1,79 @@
 #include<iostream>
 #include<string>
- 
-  class Player {
-      private :
-      std::string nickname;
-      int health;
-      public:
-      Player(std::string name = "Steve", int hp = 20) : nickname(name), health(hp) {
+
+class Player {
+private:
+    std::string nickname;
+    int health;
+
+public:
+    Player() : Player("Steve", 20) {}
+
+    Player(std::string name, int hp) : nickname(name), health(hp) {
         std::cout << "[Player] " << nickname << " заспавнився! HP: " << health << std::endl;
     }
+
+    ~Player() {
+        std::cout << "[Player] " << nickname << " вийшов з гри!" << std::endl;
+    }
+
+    void showStats() {
+        std::cout << "Nickname: " << nickname << " | HP: " << health << std::endl;
+    }
 };
+
 class DiamondSword {
-public:
+private:
     int damage;
-    DiamondSword() : damage(7) {
+
+public:
+    DiamondSword() : DiamondSword(7) {}
+
+    DiamondSword(int dmg) : damage(dmg) {
         std::cout << "[Item] Алмазний меч створено! Damage: " << damage << std::endl;
     }
-};
-class IronArmor {
-public:
-    int defense;
-    IronArmor() : defense(5) {
-        std::cout << "[Item] Залізна броня одягнена! Defense: " << defense << std::endl;
+
+    ~DiamondSword() {
+        std::cout << "[Item] Алмазний меч знищено!" << std::endl;
+    }
+
+    int getDamage() {
+        return damage;
     }
 };
-   int main (){
-       Player p1("VladosPro228");
-       DiamondSword sword;
-       IronArmor armor;
-       return 0;
-   }
+
+class IronArmor {
+private:
+    int defense;
+
+public:
+    IronArmor() : IronArmor(5) {}
+
+    IronArmor(int def) : defense(def) {
+        std::cout << "[Item] Залізна броня одягнена! Defense: " << defense << std::endl;
+    }
+
+    ~IronArmor() {
+        std::cout << "[Item] Броню знято!" << std::endl;
+    }
+
+    int getDefense() {
+        return defense;
+    }
+};
+
+int main() {
+
+    Player p1("VladosPro228", 30);
+    Player p2;
+
+    DiamondSword sword;
+    IronArmor armor;
+
+    p1.showStats();
+
+    std::cout << "Damage меча: " << sword.getDamage() << std::endl;
+    std::cout << "Defense броні: " << armor.getDefense() << std::endl;
+
+    return 0;
+}
