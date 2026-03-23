@@ -2,8 +2,20 @@
 #include <string>
 #include <utility>
 
-class Player {
-private:
+class WorldEntity {
+protected:
+    double x, y;
+public:
+    WorldEntity(double _x = 0, double _y = 0) : x(_x), y(_y) {
+        std::cout << "[WorldEntity] Created at (" << x << ", " << y << ")" << std::endl;
+    }
+    virtual ~WorldEntity() {
+        std::cout << "[WorldEntity] Destroyed" << std::endl;
+    }
+};
+
+class Player : public WorldEntity {
+protected:
     std::string nickname;
     int health;
     static int playerCount;
@@ -11,19 +23,23 @@ private:
 public:
     Player() : Player("Steve", 20) {}
 
-    Player(std::string name, int hp) : nickname(name), health(hp) {
+    Player(std::string name, int hp, double _x = 0, double _y = 0) 
+        : WorldEntity(_x, _y), nickname(name), health(hp) {
         playerCount++;
-        std::cout << "[Spawn] " << nickname << " заспавнився! HP: " << health << std::endl;
+        std::cout << "[Spawn] " << nickname << " HP: " << health << std::endl;
     }
 
-    Player(const Player& other) : nickname(other.nickname + "_Copy"), health(other.health) {
+    Player(const Player& other) 
+        : WorldEntity(other.x, other.y), nickname(other.nickname + "_Copy"), health(other.health) {
         playerCount++;
-        std::cout << "[Copy] Створено копію гравця: " << nickname << std::endl;
+        std::cout << "[Copy] Created: " << nickname << std::endl;
     }
 
-    Player(Player&& other) noexcept : nickname(std::move(other.nickname)), health(other.health) {
+    Player(Player&& other) noexcept 
+        : WorldEntity(std::move(other.x), std::move(other.y)), 
+          nickname(std::move(other.nickname)), health(other.health) {
         other.health = 0;
-        std::cout << "[Move] Дані гравця переміщено!" << std::endl;
+        std::cout << "[Move] Data moved!" << std::endl;
     }
 
     static int getOnline() {
@@ -33,26 +49,28 @@ public:
     void operator-() {
         this->health -= 10;
         if (this->health < 0) this->health = 0;
-        std::cout << "[Effect] " << nickname << " отримав шкоду!" << std::endl;
+        std::cout << "[Effect] " << nickname << " took damage!" << std::endl;
     }
 
     Player& operator+(int heal) {
         this->health += heal;
-        std::cout << "[Effect] " << nickname << " вилікувався!" << std::endl;
+        std::cout << "[Effect] " << nickname << " healed!" << std::endl;
         return *this;
     }
-friend std::ostream& operator<<(std::ostream& os, const Player& p) {
-        os << "Nickname: " << p.nickname << " | HP: " << p.health;
+
+    friend std::ostream& operator<<(std::ostream& os, const Player& p) {
+        os << "Nickname: " << p.nickname << " | HP: " << p.health << " | Pos: (" << p.x << "," << p.y << ")";
         return os;
     }
 
     friend std::istream& operator>>(std::istream& is, Player& p) {
-        std::cout << "Введіть Nickname: ";
+        std::cout << "Nickname: ";
         is >> p.nickname;
-        std::cout << "Введіть Health: ";
+        std::cout << "Health: ";
         is >> p.health;
         return is;
     }
+
     void updateProfile(std::string nickname, int health) {
         this->nickname = nickname; 
         this->health = health;
@@ -60,21 +78,32 @@ friend std::ostream& operator<<(std::ostream& os, const Player& p) {
 
     void showStats() const {
         if (nickname.empty()) {
-            std::cout << "Статистика: Гравець порожній." << std::endl;
+            std::cout << "Stats: Empty." << std::endl;
         } else {
-            std::cout << "Nickname: " << nickname << " | HP: " << health << std::endl;
+            std::cout << "Nickname: " << nickname << " | HP: " << health << " | Pos: (" << x << "," << y << ")" << std::endl;
         }
     }
 
     ~Player() {
         if (!nickname.empty()) {
             playerCount--;
-            std::cout << "[Quit] " << nickname << " вийшов з гри!" << std::endl;
+            std::cout << "[Quit] " << nickname << " left!" << std::endl;
         }
     }
 };
 
 int Player::playerCount = 0;
+
+class Admin : public Player {
+public:
+    Admin(std::string name) : Player(name, 999, 0, 0) {
+        std::cout << "[Admin] God mode for " << nickname << std::endl;
+    }
+    
+    ~Admin() {
+        std::cout << "[Admin] Logged out" << std::endl;
+    }
+};
 
 class DiamondSword {
 private:
@@ -93,23 +122,20 @@ public:
 };
 
 int main() {
-    Player p1("VladosPro228", 50);
-    const Player admin("Admin_Bot", 999);
+    Admin superuser("Notch");
+    std::cout << "----------------" << std::endl;
+
+    Player p1("VladosPro228", 50, 10, 20);
+    const Player admin_bot("Admin_Bot", 999);
 
     -p1;
     p1 + 15;
 
-   std::cout << "\n--- Тест оператора виведення (<<) ---" << std::endl;
-    std::cout << "Об'єкт p1: " << p1 << std::endl;
-    std::cout << "Об'єкт admin: " << admin << std::endl;
+    std::cout << "\n--- Test Output Operator ---" << std::endl;
+    std::cout << "p1: " << p1 << std::endl;
+    std::cout << "superuser: " << superuser << std::endl;
 
-    std::cout << "\n--- Тест оператора введення (>>) ---" << std::endl;
-    std::cin >> p1; // Введи нові дані для p1 з клавіатури
-
-    std::cout << "\n--- Оновлений стан після введення ---" << std::endl;
-    std::cout << p1 << std::endl;
-
-    std::cout << "\nГравців онлайн: " << Player::getOnline() << std::endl;
+    std::cout << "\nOnline count: " << Player::getOnline() << std::endl;
     std::cout << "----------------\n" << std::endl;
 
     return 0;
